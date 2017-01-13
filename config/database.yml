@@ -14,9 +14,9 @@ development:
 
 production:
   adapter: postgresql
-  host: ec2-54-225-118-55.compute-1.amazonaws.com
-  database: d4qv76f799m9bm
-  user: vafkhjtmxrbhsx
+  host: ec2-54-221-210-126.compute-1.amazonaws.com
+  database: dci6bdva7d3q2g
+  user: orlndldppzsbsg
   port: 5432
-  password: 54f46af8ae0f489be86d0ee9510385421ba9d31f5fff8a2a6f5e6656ee062494
-  uri: postgres://vafkhjtmxrbhsx:54f46af8ae0f489be86d0ee9510385421ba9d31f5fff8a2a6f5e6656ee062494@ec2-54-225-118-55.compute-1.amazonaws.com:5432/d4qv76f799m9bm
+  password: 16c9b40a5a9e74fd6c0eb3070d1753bbaeb051937fe608de891d44d34adc8a09
+  uri: postgres://orlndldppzsbsg:16c9b40a5a9e74fd6c0eb3070d1753bbaeb051937fe608de891d44d34adc8a09@ec2-54-221-210-126.compute-1.amazonaws.com:5432/dci6bdva7d3q2g
