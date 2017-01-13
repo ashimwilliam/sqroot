@@ -1,0 +1,184 @@
+<div id="preview">
+  <% if restricted.present? %>
+	  <%#= restricted.inspect %>
+	  <% base_ques = restricted.where(base_ques_id: current_question.id )%>
+	  <% @base_question = Question.find(restricted.first.main_ques_id) %>
+	  <% que = question.detect{|w| w.id == @base_question.id } %>
+	  <%#= que.inspect %> 
+  <% end %>
+  <%= form_for BirthPlan.new, url: restrict_admin_birth_plans_path do |f| %>
+    <h6><%= current_question.title %></h6>
+  	<table class="list-ques"> 
+  	  <tr>
+  	   	<td>
+  	   		<div>
+			    <%= hidden_field_tag "current_question_id", current_question.id %>
+			  	<select name="question_id" id="quest">
+			  	    <option value="">Select Question</option> 
+			  	  <% if @base_question.present? %>  
+			  	    <option value="<%= @base_question.id %>" selected><%= @base_question.title %></option> 
+			  	    <% question.each do |ques| %>
+			  	      <% unless ques.id == que.id %>
+					  	    <option value="<%= ques.id %>" data-qtype="<%= ques.ques_type %>" <% if ques.ques_type > 3 %> disabled="disabled" <% end %>><%= ques.title %></option> 
+					  	  <% end %>   
+					  	<% end %>
+			  	  <% else %>  
+					  	<% question.each do |ques| %>
+					  	  <option value="<%= ques.id %>" data-qtype="<%= ques.ques_type %>" <% if ques.ques_type > 3 %> disabled="disabled" <% end %>><%= ques.title %></option>  
+					  	<% end %>
+					  <% end %> 	
+			  	</select>
+		  	<div>
+  	   	</td>
+  	   </tr> 
+			<% question.each do |ques| %> 
+			  <% main_ques = restricted.where(main_ques_id: ques) if restricted.present? %>
+				<tr id="tr_<%= ques.id %>" style="display: none;">
+  				<td>
+  				  <% options = Question.find(ques).options %>
+						
+						<% if ques.ques_type == 2 || ques.ques_type == 1 %>
+						  <% options.each do |option| %>
+						    <% if main_ques.present? %>
+	                <% unless main_ques.where(main_option_id: option.id).empty? %> 
+							      <label class="radio-inline"><input class="main-ques-opt" type="radio" name="[question][<%=ques.id%>]" value="<%= option.id %>" checked><%= option.option_title %> </label>
+							    <% else %>
+							     	<label class="radio-inline"><input class="main-ques-opt" type="radio" name="[question][<%=ques.id%>]" value="<%= option.id %>"><%= option.option_title %> </label>
+							    <% end %> 
+							  <% else %>
+							    <label class="radio-inline"><input class="main-ques-opt" type="radio" name="[question][<%=ques.id%>]" value="<%= option.id %>"><%= option.option_title %> </label>
+							  <% end %>   
+							<% end %>  
+						<% elsif ques.ques_type == 3 %>
+						  <% options.each do |option| %>
+						    <% if main_ques.present? %>
+							    <% unless main_ques.where(main_option_id: option.id).empty? %>
+							    	<label class="radio-inline"><input class="main-ques-opt" type="radio" name="[question][<%=ques.id%>]" value="<%= option.id %>" checked ><%= option.option_title %> </label>
+							    <% else %>
+							     	<label class="radio-inline"><input class="main-ques-opt" type="radio" name="[question][<%=ques.id%>]" value="<%= option.id %>"><%= option.option_title %> </label>
+							    <% end %> 	
+							  <% else %>
+							      <label class="radio-inline"><input class="main-ques-opt" type="radio" name="[question][<%=ques.id%>]" value="<%= option.id %>"><%= option.option_title %> </label>
+							  <% end %>  
+							<% end %>   
+						<% end %>
+				  </td>
+  			</tr>
+			<% end %> 				
+		</table>
+		<% if @base_question.present? %>
+		<div id="res_type">
+		  <h6>Restriction Type</h6>
+			<table>
+			  <tr class="base_question">
+			  	<td>
+			  		Question Hide 
+			  	</td>
+			  	<td>	
+			  	  <% unless base_ques.first.ques_status?  %>
+				  		<input type="radio" class="res_opt_type" name="base_question"
+				  		 value='<%= "#{current_question.id}" %>' checked>
+			  	  <% else %>
+			  		  <input type="radio" class="res_opt_type" name="base_question"
+			  		 value='<%= "#{current_question.id}" %>'>
+            <% end %>			  		
+			  	</td>
+			  </tr>
+			  <% if current_question.ques_type < 4 %>	
+				  <tr>	
+				    <td>
+				  		Question Options Hide 
+				  	</td>
+				  	<td>
+							<% if base_ques.first.option_status == false  %>
+							  <input type="radio" class="res_opt_type" name="base_question"
+				  		   value='yes' checked>
+							<% else %>  
+				  		  <input type="radio" class="res_opt_type" name="base_question"
+				  		   value='yes'>
+							<% end %>
+				  	</td>
+				  </tr>
+				  <% if base_ques.first.option_status == false  %>
+					  <tr id="option-list">	
+					    <td colspan="2">
+					      	<% current_question.options.each do |opt|%>
+						    	  <% unless base_ques.where(base_option_id: opt).empty?  %>
+										  <label><%= opt.option_title %></label>
+										  <input class="chk_ol" type="checkbox" name="[base_option]<%= opt.id %>" checked>
+										<% else %>
+		                  <label><%= opt.option_title %></label>
+										  <input class="chk_ol" type="checkbox" name="[base_option]<%= opt.id %>">
+										<% end %>  
+									<% end %>					
+					    </td>
+					  </tr>
+					<% else %>
+					  <tr id="option-list" style="display: none;">	
+					    <td colspan="2">
+					      
+									<% current_question.options.each do |opt|%>
+									  <input class="chk_ol" type="checkbox" name="[base_option]<%= opt.id %>">
+									  <label><%= opt.option_title %></label>
+									<% end %>			
+					    </td>
+				    </tr>
+					<% end %>  
+			  <% end %>		
+			
+			</table>
+		</div>
+	  <% else %>
+	    <div id="res_type" style="display: none;">
+	    	
+	    <h6>Restriction Type</h6>
+	    <table>
+			  <tr class="base_question">
+			  	<td>
+			  		Question Hide 
+			  	</td>
+			  	<td>	
+			  		<input type="radio" class="res_opt_type" name="base_question"
+			  		 value='<%= "#{current_question.id}" %>'>
+			  	</td>
+			  </tr>	
+			  <% if current_question.ques_type < 4 %>	
+				  <tr>	
+				    <td>
+				  		Question Options Hide 
+				  	</td>
+				  	<td>
+				  		<input type="radio" class="res_opt_type" name="base_question"
+				  		 value='yes'>
+				  	</td>
+				  </tr>
+				  <tr id="option-list" style="display: none;">	
+				    <td colspan="2">
+				      
+								<% current_question.options.each do |opt|%>
+								  <input type="checkbox" name="[base_option]<%= opt.id %>">
+								  <label><%= opt.option_title %></label>
+								<% end %>			
+				    </td>
+				  </tr>
+				<% end %>  
+			</table>
+	    </div>
+	  <% end %>		
+	  <div class="res_errors" style="display: none; color: red; font-size: 11px;">All Restriction has been removed</div>
+	  <%= f.submit "Submit", class: 'btn btn-info btn-lg' %>
+	  <input name="commit" value="Reset" id="reset_form" class="btn btn-info btn-lg" type="button">
+  <% end %>
+</div>
+<style type="text/css">
+	input[type="checkbox"]{
+    margin: -2px 0 0 0;
+    vertical-align: middle;
+}
+ .radio-inline input[type=radio] {
+    position: absolute;
+    margin-top: 4px\9;
+    margin-left: -20px;
+    margin-top: 5px;
+}
+</style>

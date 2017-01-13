@@ -1,0 +1,32 @@
+.row
+  .columns.small-12
+    %h2= @user.first_name + @user.last_name
+
+    /= link_to 'Edit', edit_admin_team_member_path(@team_member), :class => 'button tiny radius info'
+    /= link_to 'Delete', admin_team_member_path(@team_member), method: :delete, data: { confirm: 'Are you sure?' }, :class => 'button tiny radius info'
+
+.row
+  .col-sm-2
+    %strong First Name
+  .col-sm-10
+    = @user.first_name
+.row
+  .col-sm-2
+    %strong Last Name
+  .col-sm-10
+    = @user.last_name
+.row
+  .col-sm-2
+    %strong Email
+  .col-sm-10
+    = @user.email
+.row
+  .col-sm-2
+    %strong Zipcode
+  .col-sm-10
+    = @user.zipcode || "N/A"
+.row
+  .col-sm-2
+    %strong Due Date
+  .col-sm-10
+    = @user.due_date || "N/A"
